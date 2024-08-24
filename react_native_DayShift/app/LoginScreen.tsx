@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icons
-import { useNavigation } from '@react-navigation/native'; // 导入导航钩子
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { useNavigation } from '@react-navigation/native'; 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -15,7 +15,7 @@ export default function LoginScreen() {
     'Pacifico-Regular': require('../assets/fonts/Pacifico-Regular.ttf'), // Replace with your custom font
   });
 
-  const navigation = useNavigation(); // 使用导航钩子
+  const navigation = useNavigation(); 
 
   if (!fontsLoaded) {
     return null;
@@ -23,7 +23,7 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     if (username === 'admin' && password === 'password') {
-      Alert.alert('Login Successful');
+      navigation.navigate('HomeScreen');  // 导航到 HomeScreen
     } else {
       Alert.alert('Invalid Username or Password');
     }
@@ -34,7 +34,7 @@ export default function LoginScreen() {
   };
 
   const navigateToRegister = () => {
-    navigation.navigate('RegisterScreen'); // 导航到注册页面
+    navigation.navigate('RegisterScreen'); 
   };
 
   return (
@@ -53,7 +53,11 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} color="#4CAF50" />
+
+      {/* Login Button */}
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
 
       <View style={styles.socialLoginContainer}>
         <TouchableOpacity style={[styles.socialButton, styles.facebookButton]} onPress={() => handleSocialLogin('Facebook')}>
@@ -81,39 +85,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', // Center the content horizontally
+    alignItems: 'center', 
     paddingHorizontal: 20,
-    backgroundColor: '#4CAF50', // Set background color to green
+    backgroundColor: '#4CAF50', 
   },
   title: {
-    fontSize: 36, // Larger font size for the title
+    fontSize: 36, 
     fontWeight: 'bold',
-    color: '#fff', // White color for the title text
-    marginBottom: 40, // Increase margin to create space between title and inputs
+    color: '#fff', 
+    marginBottom: 40, 
     textAlign: 'center',
-    textTransform: 'uppercase', // Make the text uppercase
+    textTransform: 'uppercase', 
   },
   input: {
-    width: '100%', // Make the input field take full width
+    width: '100%', 
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 15,
     backgroundColor: '#fff',
-    borderRadius: 25, // Round corners
+    borderRadius: 25, 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3.84,
     elevation: 5,
   },
+  loginButton: {
+    backgroundColor: '#006400', 
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    borderRadius: 25,
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   socialLoginContainer: {
     marginTop: 20,
     width: '100%',
   },
   socialButton: {
-    flexDirection: 'row', // Align icon and text in a row
+    flexDirection: 'row', 
     height: 50,
     borderRadius: 25,
     justifyContent: 'center',
@@ -121,7 +143,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   socialIcon: {
-    marginRight: 10, // Add space between icon and text
+    marginRight: 10, 
   },
   facebookButton: {
     backgroundColor: '#3b5998',

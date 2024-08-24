@@ -1,16 +1,19 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import LoginScreen from './LoginScreen';  // 确保路径和组件名称正确
-import RegisterScreen from './RegisterScreen';  // 确保路径和组件名称正确
+import LoginScreen from './LoginScreen';  // 确保路径正确
+import RegisterScreen from './RegisterScreen';  // 确保路径正确
+import HomeScreen from './HomeScreen';  // 假设你有一个 HomeScreen
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// 防止启动画面在资源加载完成前自动隐藏
 SplashScreen.preventAutoHideAsync();
+
+const Stack = createStackNavigator();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -30,15 +33,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName="LoginScreen"> {/* 直接使用 Stack 作为路由管理器 */}
-        <Stack.Screen 
-          name="LoginScreen" 
-          options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-          name="RegisterScreen" 
-        />
-      </Stack>
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}  />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </ThemeProvider>
   );
 }
