@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import LoginScreen from './LoginScreen';  // 确保路径和组件名称正确
+import RegisterScreen from './RegisterScreen';  // 确保路径和组件名称正确
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,9 +30,14 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+      <Stack initialRouteName="LoginScreen"> {/* 直接使用 Stack 作为路由管理器 */}
+        <Stack.Screen 
+          name="LoginScreen" 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="RegisterScreen" 
+        />
       </Stack>
     </ThemeProvider>
   );
