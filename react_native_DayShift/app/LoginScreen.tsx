@@ -4,15 +4,16 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { useNavigation } from '@react-navigation/native'; 
+import { observer } from 'mobx-react';
+import AuthStore from './stores/AuthStore';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function LoginScreen() {
+const LoginScreen = observer(() => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [fontsLoaded] = useFonts({
-    'Pacifico-Regular': require('../assets/fonts/Pacifico-Regular.ttf'), // Replace with your custom font
+    'Pacifico-Regular': require('../assets/fonts/Pacifico-Regular.ttf'),
   });
 
   const navigation = useNavigation(); 
@@ -21,11 +22,19 @@ export default function LoginScreen() {
     return null;
   }
 
-  const handleLogin = () => {
-    if (username === 'admin' && password === 'password') {
-      navigation.navigate('HomeScreen');  // 导航到 HomeScreen
-    } else {
-      Alert.alert('Invalid Username or Password');
+  const handleLogin = async () => {
+    try {
+      AuthStore.setUsername(username);
+      await AuthStore.login(password);
+
+      if (AuthStore.isLoggedIn) {
+        console.log('Login successful');
+        navigation.navigate('HomeScreen');
+      } else {
+        Alert.alert('Login failed', 'Invalid Username or Password');
+      }
+    } catch (error) {
+      Alert.alert('Login failed', `Something went wrong: ${error.message}`);
     }
   };
 
@@ -53,12 +62,9 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-
-      {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
-
       <View style={styles.socialLoginContainer}>
         <TouchableOpacity style={[styles.socialButton, styles.facebookButton]} onPress={() => handleSocialLogin('Facebook')}>
           <Icon name="facebook" size={20} color="#fff" style={styles.socialIcon} />
@@ -73,13 +79,12 @@ export default function LoginScreen() {
           <Text style={styles.socialButtonText}>Login with Instagram</Text>
         </TouchableOpacity>
       </View>
-
       <TouchableOpacity onPress={navigateToRegister} style={styles.registerButton}>
         <Text style={styles.registerButtonText}>Don't have an account? Register here</Text>
       </TouchableOpacity>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -166,3 +171,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+export default LoginScreen;

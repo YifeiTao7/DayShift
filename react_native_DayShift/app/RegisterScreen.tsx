@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import apiFetch from './services/api'; // 引入 apiFetch 函数
 
 export default function RegisterScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleRegister = () => {
-    // Handle the registration logic here
+  const handleRegister = async () => {
+    if (!username || !password || !email) {
+      Alert.alert('Validation Error', 'Username, email, and password are required.');
+      return;
+    }
+  
+    try {
+      const response = await apiFetch('/auth/register', {
+        method: 'POST',
+        data: {
+          username: username,
+          password: password,
+          email: email,
+        },
+      });
+  
+      if (response.success) {
+        Alert.alert('Registration successful', 'You can now log in with your new account.');
+        navigation.navigate('LoginScreen', { username, password });
+      } else {
+        Alert.alert('Registration failed', response.message || 'Username might be taken or another error occurred.');
+      }
+    } catch (error) {
+      Alert.alert('Registration failed', `Error: ${error.message || 'Unknown error occurred.'}`);
+    }
   };
+  
 
   const navigateToLogin = () => {
     navigation.navigate('LoginScreen');
@@ -26,12 +53,23 @@ export default function RegisterScreen() {
       />
       <TextInput
         style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} color="#4CAF50" />
+      {loading ? (
+        <ActivityIndicator size="large" color="#fff" />
+      ) : (
+        <Button title="Register" onPress={handleRegister} color="#4CAF50" />
+      )}
 
       <TouchableOpacity onPress={navigateToLogin} style={styles.loginButton}>
         <Text style={styles.loginButtonText}>Already have an account? Login here</Text>

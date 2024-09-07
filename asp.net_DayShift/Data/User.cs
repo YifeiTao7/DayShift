@@ -3,7 +3,7 @@ namespace asp.net_DayShift.Data
     public class User
     {
         public int Id { get; set; } // 唯一标识符
-        public string Name { get; set; } // 姓名
+        public string Username { get; set; } // 用户名
         public string Email { get; set; } // 邮箱
         public string PasswordHash { get; set; } // 哈希密码
 

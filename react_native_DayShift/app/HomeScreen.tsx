@@ -1,10 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { observer } from 'mobx-react-lite';
+import AuthStore from './stores/AuthStore'; // 引入 AuthStore
 
-export default function HomeScreen({ navigation }) {
+const HomeScreen = observer(({ navigation }) => {
+  const handleLogout = () => {
+    AuthStore.logout();
+    navigation.navigate('LoginScreen');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Day Shift</Text>
+      <Text style={styles.title}>Welcome to Day Shift, {AuthStore.username}</Text>
       
       <TouchableOpacity
         style={styles.button}
@@ -19,9 +26,16 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.buttonText}>Need Change</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -56,4 +70,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  logoutButton: {
+    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    backgroundColor: '#FF3D00', // Red background color for logout
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  logoutButtonText: {
+    color: '#fff', // White text color
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
+
+export default HomeScreen;

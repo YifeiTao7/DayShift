@@ -1,11 +1,13 @@
 using HotChocolate.Execution;
 using Microsoft.EntityFrameworkCore;
 using asp.net_DayShift.Data; // 确保使用了正确的命名空间
+using Microsoft.AspNetCore.Cors;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 添加服务到容器
 builder.Services.AddControllers();
+
 // 配置 Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -13,6 +15,17 @@ builder.Services.AddSwaggerGen();
 // 添加 DbContext，并使用 PostgreSQL 连接字符串
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 添加 CORS 配置
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin()
+                     .AllowAnyMethod()
+                     .AllowAnyHeader();
+    });
+});
 
 // 添加 GraphQL 服务
 builder.Services
@@ -28,7 +41,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// 使用 CORS 中间件
+app.UseCors();
+
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
